@@ -1,0 +1,68 @@
+- metrics_config:
+    profiles:
+        profile_1:
+            profile_name: "profile name"
+            start_date: "None"
+            end_date: "None"
+            run_type: "daily"
+            filter_column_name: "createdts"
+            metrics_write_path: "output metrics path"
+            other_params: {'save_input_data':'yes'}
+            description: "This is general profile for order fact"
+            input_data_params:
+                input_file_path: "input file path"
+                table_name: "emr_cluster_list"
+                source_type: "local"
+                db: "dldb"
+                schema_name: ""
+                custom_query_to_run : "no"
+                custom_query: "select * from {schema_name_1}.{table_name_1} where {date_column}>={start_date} and {date_column}<{end_date}"
+                custom_query_params: {'table_name_1': 'order_fact','date_column': 'order_date','schema_name_1': ''}
+            profile_setup_current:
+                Completeness: []
+                CountDistinct: ["pk"]
+                Maximum: []
+                Minimum: []
+                Mean: []
+                Uniqueness: []
+                Distinctness: ["pk"]
+                Sum: ["pk"]
+            profile_setup_new:
+                Completeness: ["pk"]
+                CountDistinct: ["pk"]
+                Maximum: ["pk",]
+                Minimum: ["pk"]
+                Mean: ["pk"]
+                Uniqueness: ["pk"]
+                Distinctness: ["pk"]
+                Sum: ["pk"]
+
+    checks:
+        check-1:
+            check_name: "Test_Check"
+            check_level: "warning"
+            start_date: "current_date_minus_1"
+            end_date: "None"
+            run_type: "daily"
+            filter_column_name: "createdts"
+            metrics_write_path: "output metrics path"
+            other_params: {'save_input_data':'no'}
+            description: "This is general check for table"
+            input_data_params:
+                input_file_path: "input file path"
+                table_name: "emr_cluster_list"
+                source_type: "local"
+                db: "dldb"
+                schema_name: ""
+                custom_query_to_run: "no"
+                custom_query: "select * from {schema_name_1}.{table_name_1} where {date_column}>={start_date} and {date_column}<{end_date}"
+                custom_query_params: { 'table_name_1': '','date_column': '','schema_name_1': '' }
+            check_params:
+                isComplete: ["pk","p_calculated"]
+                isUnique: ["pk","p_calculated"]
+                satisfiescount: [{'p_totalprice>5000':{">":200,"description": "This criteria is for check for p_totalprice"}}]
+#                checkMetrics : [{'hasRatio_1':{"compare_sign":">","compare_value":0.26,'numeratorParams':{'inputSource':'local','tableName':'emr_cluster_list','name':'Distinctness','instance':'pk'},'denominatorParams':{'inputSource':'local','tableName':'emr_cluster_list','name':'Distinctness','instance':'p_deliveryaddress'}}}]
+                checkMetrics: [ { 'isCompare_1': { "compare_sign": "=",'firstValParams': { 'inputSource': 'local','tableName': 'emr_cluster_list','name': 'CountDistinct','instance': 'pk' },'secondValParams': { 'inputSource': 'local','tableName': 'emr_cluster_list','name': 'CountDistinct','instance': 'p_deliveryaddress' },'data_date':'CURRENT_DATE_MINUS_1' } } ]
+
+
+
